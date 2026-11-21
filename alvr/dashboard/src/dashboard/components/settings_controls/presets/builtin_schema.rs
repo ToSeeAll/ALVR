@@ -31,21 +31,21 @@ fn bool_modifier(target_path: &str, value: bool) -> PresetModifier {
 
 pub fn resolution_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Resolution".into(),
+        name: "分辨率".into(),
         strings: [(
             "help".into(),
-            "Choosing too high resolution (commonly 'High (width: 5184)') may result in high latency or black screen.".into(),
+            "选择过高的分辨率（通常是“高（宽 5184）”）可能导致高延迟或黑屏。".into(),
         )]
         .into_iter()
         .collect(),
         flags: ["steamvr-restart".into()].into_iter().collect(),
         options: [
-            ("Very Low (width: 3072)", "1536"),
-            ("Low (width: 3712)", "1856"),
-            ("Medium (width: 4288)", "2144"),
-            ("High (width: 5184)", "2592"),
-            ("Ultra (width: 5632)", "2816"),
-            ("Extreme (width: 6080)", "3040"),
+            ("极低（宽 3072）", "1536"),
+            ("低（宽 3712）", "1856"),
+            ("中（宽 4288）", "2144"),
+            ("高（宽 5184）", "2592"),
+            ("超高（宽 5632）", "2816"),
+            ("极致（宽 6080）", "3040"),
         ]
         .into_iter()
         .map(|(key, value)| HigherOrderChoiceOption {
@@ -81,14 +81,14 @@ pub fn resolution_schema() -> PresetSchemaNode {
             content: None,
         })
         .collect(),
-        default_option_display_name: "Medium (width: 4288)".into(),
+        default_option_display_name: "中（宽 4288）".into(),
         gui: ChoiceControlType::Dropdown,
     })
 }
 
 pub fn framerate_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Preferred framerate".into(),
+        name: "首选帧率".into(),
         strings: HashMap::new(),
         flags: ["steamvr-restart".into()].into_iter().collect(),
         options: [60, 72, 80, 90, 120]
@@ -111,13 +111,11 @@ pub fn framerate_schema() -> PresetSchemaNode {
 
 pub fn codec_preset_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Codec preset".into(),
+        name: "编码器预设".into(),
         strings: [
             (
             "notice".into(),
-            "AV1 encoding is only supported on RDNA3, Ada Lovelace, Intel ARC or newer GPUs (AMD RX 7xxx+ , NVIDIA RTX 40xx+, Intel ARC)
-and on headsets that have XR2 Gen 2 onboard (Quest 3, Pico 4 Ultra).\n
-H264 encoding is currently NOT supported on Intel ARC GPUs on Windows."
+            "AV1 编码仅受 RDNA3、Ada Lovelace、Intel ARC 或更新架构的显卡支持（AMD RX 7xxx+、NVIDIA RTX 40xx+、Intel ARC），\n并且需要头显端搭载 XR2 Gen 2（Quest 3、Pico 4 Ultra）。\n\n在 Windows 上，Intel ARC 显卡目前不支持 H264 编码。"
                 .into(),
             ),
         ]
@@ -144,18 +142,18 @@ H264 encoding is currently NOT supported on Intel ARC GPUs on Windows."
 
 pub fn encoder_preset_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Encoder preset".into(),
+        name: "编码速度预设".into(),
         strings: [(
             "help".into(),
-            "Selecting a quality too high may result in stuttering or still image!".into(),
+            "选择过高的质量可能导致卡顿甚至画面静止！".into(),
         )]
         .into_iter()
         .collect(),
         flags: ["steamvr-restart".into()].into_iter().collect(),
         options: [
-            ("Speed", "Speed", "P1"),
-            ("Balanced", "Balanced", "P3"),
-            ("Quality", "Quality", "P5"),
+            ("速度", "Speed", "P1"),
+            ("均衡", "Balanced", "P3"),
+            ("质量", "Quality", "P5"),
         ]
         .into_iter()
         .map(|(key, val_amd, val_nv)| HigherOrderChoiceOption {
@@ -175,7 +173,7 @@ pub fn encoder_preset_schema() -> PresetSchemaNode {
             content: None,
         })
         .collect(),
-        default_option_display_name: "Speed".into(),
+        default_option_display_name: "速度".into(),
         gui: ChoiceControlType::ButtonGroup,
     })
 }
@@ -183,22 +181,19 @@ pub fn encoder_preset_schema() -> PresetSchemaNode {
 pub fn foveation_preset_schema() -> PresetSchemaNode {
     const PREFIX: &str = "session_settings.video.foveated_encoding";
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Foveation preset".into(),
+        name: "中心凹预设".into(),
         strings: [(
             "help".into(),
-            "Foveation affects pixelation on the edges of \
-            the screen and significantly reduces codec latency. 
-It is not recommended to fully disable it, as it may cause \
-shutterring and high encode/decode latency!"
+            "中心凹编码会影响画面边缘的像素化程度，并能显著降低编码延迟。\n不建议完全关闭，否则可能出现卡顿以及很高的编码/解码延迟！"
                 .into(),
         )]
         .into_iter()
         .collect(),
         flags: ["steamvr-restart".into()].into_iter().collect(),
         options: [
-            ("Light", [0.80, 0.80], [8.0, 8.0]),
-            ("Medium", [0.66, 0.60], [6.0, 6.0]),
-            ("High", [0.45, 0.40], [4.0, 5.0]),
+            ("轻度", [0.80, 0.80], [8.0, 8.0]),
+            ("中度", [0.66, 0.60], [6.0, 6.0]),
+            ("重度", [0.45, 0.40], [4.0, 5.0]),
         ]
         .into_iter()
         .map(|(key, center_size, edge_ratio)| {
@@ -232,7 +227,7 @@ shutterring and high encode/decode latency!"
             }
         })
         .collect(),
-        default_option_display_name: "High".into(),
+        default_option_display_name: "重度".into(),
         gui: ChoiceControlType::ButtonGroup,
     })
 }
@@ -240,12 +235,12 @@ shutterring and high encode/decode latency!"
 #[cfg(target_os = "linux")]
 pub fn game_audio_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Headset speaker".into(),
+        name: "头显扬声器".into(),
         strings: HashMap::new(),
         flags: HashSet::new(),
         options: [
             HigherOrderChoiceOption {
-                display_name: "Disabled".into(),
+                display_name: "禁用".into(),
                 modifiers: vec![bool_modifier(
                     "session_settings.audio.game_audio.enabled",
                     false,
@@ -253,7 +248,7 @@ pub fn game_audio_schema() -> PresetSchemaNode {
                 content: None,
             },
             HigherOrderChoiceOption {
-                display_name: "Enabled".into(),
+                display_name: "启用".into(),
                 modifiers: vec![bool_modifier(
                     "session_settings.audio.game_audio.enabled",
                     true,
@@ -263,7 +258,7 @@ pub fn game_audio_schema() -> PresetSchemaNode {
         ]
         .into_iter()
         .collect(),
-        default_option_display_name: "Enabled".into(),
+        default_option_display_name: "启用".into(),
         gui: ChoiceControlType::ButtonGroup,
     })
 }
@@ -271,12 +266,12 @@ pub fn game_audio_schema() -> PresetSchemaNode {
 #[cfg(target_os = "linux")]
 pub fn microphone_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Headset microphone".into(),
+        name: "头显麦克风".into(),
         strings: HashMap::new(),
         flags: HashSet::new(),
         options: [
             HigherOrderChoiceOption {
-                display_name: "Disabled".into(),
+                display_name: "禁用".into(),
                 modifiers: vec![bool_modifier(
                     "session_settings.audio.microphone.enabled",
                     false,
@@ -284,7 +279,7 @@ pub fn microphone_schema() -> PresetSchemaNode {
                 content: None,
             },
             HigherOrderChoiceOption {
-                display_name: "Enabled".into(),
+                display_name: "启用".into(),
                 modifiers: vec![bool_modifier(
                     "session_settings.audio.microphone.enabled",
                     true,
@@ -294,7 +289,7 @@ pub fn microphone_schema() -> PresetSchemaNode {
         ]
         .into_iter()
         .collect(),
-        default_option_display_name: "Enabled".into(),
+        default_option_display_name: "启用".into(),
         gui: ChoiceControlType::ButtonGroup,
     })
 }
@@ -302,18 +297,17 @@ pub fn microphone_schema() -> PresetSchemaNode {
 #[cfg(not(target_os = "linux"))]
 pub fn game_audio_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Headset speaker".into(),
+        name: "头显扬声器".into(),
         strings: [(
             "notice".into(),
-            "You can change the default audio device from the system taskbar tray (bottom right)"
-                .into(),
+            "你可以在系统任务栏托盘（右下角）修改默认音频设备".into(),
         )]
         .into_iter()
         .collect(),
         flags: HashSet::new(),
         options: vec![
             HigherOrderChoiceOption {
-                display_name: "Disabled".into(),
+                display_name: "禁用".into(),
                 modifiers: vec![bool_modifier(
                     "session_settings.audio.game_audio.enabled",
                     false,
@@ -321,7 +315,7 @@ pub fn game_audio_schema() -> PresetSchemaNode {
                 content: None,
             },
             HigherOrderChoiceOption {
-                display_name: "System Default".to_owned(),
+                display_name: "系统默认".to_owned(),
                 modifiers: vec![
                     bool_modifier("session_settings.audio.game_audio.enabled", true),
                     bool_modifier(
@@ -334,7 +328,7 @@ pub fn game_audio_schema() -> PresetSchemaNode {
         ]
         .into_iter()
         .collect(),
-        default_option_display_name: "System Default".into(),
+        default_option_display_name: "系统默认".into(),
         gui: ChoiceControlType::ButtonGroup,
     })
 }
@@ -342,7 +336,7 @@ pub fn game_audio_schema() -> PresetSchemaNode {
 #[cfg(not(target_os = "linux"))]
 pub fn microphone_schema() -> PresetSchemaNode {
     let mut microhone_options = vec![HigherOrderChoiceOption {
-        display_name: "Disabled".to_owned(),
+        display_name: "禁用".to_owned(),
         modifiers: vec![bool_modifier(
             "session_settings.audio.microphone.enabled",
             false,
@@ -352,7 +346,7 @@ pub fn microphone_schema() -> PresetSchemaNode {
 
     if cfg!(windows) {
         for (key, display_name) in [
-            ("Automatic", "Automatic"),
+            ("Automatic", "自动"),
             ("VAC", "Virtual Audio Cable"),
             ("VBCable", "VB Cable"),
             ("VoiceMeeter", "VoiceMeeter"),
@@ -374,30 +368,30 @@ pub fn microphone_schema() -> PresetSchemaNode {
     }
 
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Headset microphone".into(),
+        name: "头显麦克风".into(),
         strings: HashMap::new(),
         flags: HashSet::new(),
         options: microhone_options.into_iter().collect(),
-        default_option_display_name: "Disabled".into(),
+        default_option_display_name: "禁用".into(),
         gui: ChoiceControlType::Dropdown,
     })
 }
 
 pub fn hand_tracking_interaction_schema() -> PresetSchemaNode {
-    const HELP: &str = r"Disabled: hands cannot emulate buttons. Useful for using Joy-Cons or other non-native controllers.
-SteamVR Input 2.0: create separate SteamVR devices for hand tracking.
-ALVR bindings: use ALVR hand tracking button bindings. Check the wiki for help.
+    const HELP: &str = r"禁用：手势不能模拟按键，适合使用 Joy-Con 等非原生控制器。
+SteamVR Input 2.0：为手部追踪创建独立的 SteamVR 设备。
+ALVR 绑定：使用 ALVR 的手部追踪按键绑定，详细用法见 wiki。
 ";
 
     const PREFIX: &str = "session_settings.headset.controllers.content";
 
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Hand tracking interaction".into(),
+        name: "手部追踪交互".into(),
         strings: [("help".into(), HELP.into())].into_iter().collect(),
         flags: ["steamvr-restart".into()].into_iter().collect(),
         options: [
             HigherOrderChoiceOption {
-                display_name: "Disabled".into(),
+                display_name: "禁用".into(),
                 modifiers: vec![
                     bool_modifier("session_settings.headset.controllers.enabled", true),
                     bool_modifier(
@@ -428,7 +422,7 @@ ALVR bindings: use ALVR hand tracking button bindings. Check the wiki for help.
                 content: None,
             },
             HigherOrderChoiceOption {
-                display_name: "ALVR bindings".into(),
+                display_name: "ALVR 绑定".into(),
                 modifiers: vec![
                     bool_modifier("session_settings.headset.controllers.enabled", true),
                     bool_modifier(
@@ -449,12 +443,12 @@ ALVR bindings: use ALVR hand tracking button bindings. Check the wiki for help.
 
 pub fn eye_face_tracking_schema() -> PresetSchemaNode {
     PresetSchemaNode::HigherOrderChoice(HigherOrderChoiceSchema {
-        name: "Eye and face tracking".into(),
+        name: "眼动与面部追踪".into(),
         strings: HashMap::new(),
         flags: HashSet::new(),
         options: [
             HigherOrderChoiceOption {
-                display_name: "Disabled".into(),
+                display_name: "禁用".into(),
                 modifiers: vec![bool_modifier(
                     "session_settings.headset.face_tracking.enabled",
                     false,
@@ -494,7 +488,7 @@ pub fn eye_face_tracking_schema() -> PresetSchemaNode {
         ]
         .into_iter()
         .collect(),
-        default_option_display_name: "Disabled".into(),
+        default_option_display_name: "禁用".into(),
         gui: ChoiceControlType::ButtonGroup,
     })
 }

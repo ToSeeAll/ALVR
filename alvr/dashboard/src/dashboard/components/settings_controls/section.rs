@@ -121,14 +121,14 @@ impl Control {
                     if entry.steamvr_restart_flag {
                         ui.colored_label(WARNING_LIGHT, "⚠")
                             .on_hover_text_at_pointer(
-                                "Changing this setting will make SteamVR restart!\n\
-                                Please save your in-game progress first",
+                                "修改此设置会导致 SteamVR 重启！\n\
+                                请先保存游戏进度",
                             );
                     }
                     if entry.real_time_flag {
                         // The emoji is blue but it will be green in the UI
                         ui.colored_label(OK_GREEN, "🔵").on_hover_text_at_pointer(
-                            "This setting can be changed in real-time during streaming!",
+                            "此设置可以在串流过程中实时修改！",
                         );
                     }
                 });

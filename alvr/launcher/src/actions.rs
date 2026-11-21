@@ -136,7 +136,7 @@ fn install_and_launch_apk(
     release: ReleaseInfo,
 ) -> Result<()> {
     worker_message_sender.send(WorkerMessage::ProgressUpdate(Progress {
-        message: "Starting install".into(),
+        message: "开始安装".into(),
         progress: 0.0,
     }))?;
 
@@ -147,12 +147,12 @@ fn install_and_launch_apk(
         let apk_url = release
             .assets
             .get(apk_name)
-            .ok_or(anyhow::anyhow!("Unable to determine download URL"))?;
+            .ok_or(anyhow::anyhow!("无法确定下载地址"))?;
         let apk_buffer = alvr_adb::commands::download(apk_url, |downloaded, total| {
             let progress = total.map_or(0.0, |t| downloaded as f32 / t as f32);
             worker_message_sender
                 .send(WorkerMessage::ProgressUpdate(Progress {
-                    message: "Downloading Client APK".into(),
+                    message: "正在下载客户端 APK".into(),
                     progress,
                 }))
                 .ok();
@@ -166,7 +166,7 @@ fn install_and_launch_apk(
         let progress = total.map_or(0.0, |t| downloaded as f32 / t as f32);
         worker_message_sender
             .send(WorkerMessage::ProgressUpdate(Progress {
-                message: "Downloading ADB".into(),
+                message: "正在下载 ADB".into(),
                 progress,
             }))
             .ok();
@@ -175,14 +175,14 @@ fn install_and_launch_apk(
     let device_serial = alvr_adb::commands::list_devices(&adb_path)?
         .iter()
         .find_map(|d| d.serial.clone())
-        .ok_or(anyhow::anyhow!("Failed to find connected device"))?;
+        .ok_or(anyhow::anyhow!("未找到已连接的设备"))?;
 
     let v = if release.version.starts_with('v') {
         release.version[1..].to_string()
     } else {
         release.version
     };
-    let version = Version::parse(&v).context("Failed to parse release version")?;
+    let version = Version::parse(&v).context("解析发布版本号失败")?;
     let stable = version.pre.is_empty() && !version.build.contains("nightly");
     let application_id = if stable {
         alvr_system_info::PACKAGE_NAME_GITHUB_STABLE
@@ -192,14 +192,14 @@ fn install_and_launch_apk(
 
     if alvr_adb::commands::is_package_installed(&adb_path, &device_serial, application_id)? {
         worker_message_sender.send(WorkerMessage::ProgressUpdate(Progress {
-            message: "Uninstalling old APK".into(),
+            message: "正在卸载旧的 APK".into(),
             progress: 0.0,
         }))?;
         alvr_adb::commands::uninstall_package(&adb_path, &device_serial, application_id)?;
     }
 
     worker_message_sender.send(WorkerMessage::ProgressUpdate(Progress {
-        message: "Installing new APK".into(),
+        message: "正在安装新的 APK".into(),
         progress: 0.0,
     }))?;
     alvr_adb::commands::install_package(&adb_path, &device_serial, &apk_path.to_string_lossy())?;
@@ -246,7 +246,7 @@ async fn install_server(
     req_client: &reqwest::Client,
 ) -> Result<()> {
     worker_message_sender.send(WorkerMessage::ProgressUpdate(Progress {
-        message: "Starting install".into(),
+        message: "开始安装".into(),
         progress: 0.0,
     }))?;
 
@@ -259,11 +259,11 @@ async fn install_server(
     let url = release_info
         .assets
         .get(file_name)
-        .ok_or(anyhow::anyhow!("Unable to determine download link"))?;
+        .ok_or(anyhow::anyhow!("无法确定下载地址"))?;
 
     let buffer = download(
         worker_message_sender,
-        "Downloading Streamer",
+        "正在下载串流端",
         url,
         req_client,
     )

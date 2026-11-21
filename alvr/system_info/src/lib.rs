@@ -182,7 +182,10 @@ pub fn local_ip() -> std::net::IpAddr {
 
 #[derive(SettingsSchema, Serialize, Deserialize, Clone)]
 pub enum ClientFlavor {
+    #[schema(strings(display_name = "商店版"))]
     Store,
+    #[schema(strings(display_name = "GitHub 版"))]
     Github,
+    #[schema(strings(display_name = "自定义"))]
     Custom(String),
 }

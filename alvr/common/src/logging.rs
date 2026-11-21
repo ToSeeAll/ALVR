@@ -101,24 +101,34 @@ macro_rules! dbg_decoder {
 #[derive(SettingsSchema, Serialize, Deserialize, Clone)]
 pub struct DebugGroupsConfig {
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "服务端实现层"))]
     pub server_impl: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "客户端实现层"))]
     pub client_impl: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "服务端核心"))]
     pub server_core: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "客户端核心"))]
     pub client_core: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "连接"))]
     pub connection: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "套接字"))]
     pub sockets: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "服务端图形"))]
     pub server_gfx: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "客户端图形"))]
     pub client_gfx: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "编码器"))]
     pub encoder: bool,
     #[schema(flag = "steamvr-restart")]
+    #[schema(strings(display_name = "解码器"))]
     pub decoder: bool,
 }
 
@@ -155,9 +165,13 @@ pub fn is_enabled_debug_group(target: &str, config: &DebugGroupsConfig) -> bool 
     SettingsSchema, Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord,
 )]
 pub enum LogSeverity {
+    #[schema(strings(display_name = "错误"))]
     Error = 3,
+    #[schema(strings(display_name = "警告"))]
     Warning = 2,
+    #[schema(strings(display_name = "信息"))]
     Info = 1,
+    #[schema(strings(display_name = "调试"))]
     Debug = 0,
 }
 

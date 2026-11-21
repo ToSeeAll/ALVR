@@ -50,8 +50,82 @@ pub mod graph_colors {
     pub const RECORDED_BITRATE: Color32 = super::FG;
 }
 
+// egui's built-in fonts do not contain CJK glyphs, so without a fallback every Chinese
+// character would be rendered as an empty box. Load a font from the system and append it to the
+// end of both families, so Latin text keeps using the original font and only missing glyphs
+// (Chinese, Japanese, Korean) are taken from it.
+#[cfg(not(target_arch = "wasm32"))]
+fn install_cjk_fallback_font(ctx: &Context) {
+    const FONT_KEY: &str = "cjk_fallback";
+
+    let Some(font_bytes) = load_system_cjk_font() else {
+        return;
+    };
+
+    let mut fonts = egui::FontDefinitions::default();
+
+    fonts.font_data.insert(
+        FONT_KEY.to_owned(),
+        std::sync::Arc::new(egui::FontData::from_owned(font_bytes)),
+    );
+
+    for family in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {
+        fonts
+            .families
+            .entry(family)
+            .or_default()
+            .push(FONT_KEY.to_owned());
+    }
+
+    ctx.set_fonts(fonts);
+}
+
+// Ordered by preference. A TrueType collection (.ttc) is supported by the font parser.
+#[cfg(not(target_arch = "wasm32"))]
+fn load_system_cjk_font() -> Option<Vec<u8>> {
+    const CANDIDATES: &[&str] = &[
+        // Windows (zh-CN): Microsoft YaHei, DengXian, SimHei, SimSun
+        "C:/Windows/Fonts/msyh.ttc",
+        "C:/Windows/Fonts/Deng.ttf",
+        "C:/Windows/Fonts/simhei.ttf",
+        "C:/Windows/Fonts/simsun.ttc",
+        // Linux
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
+    ];
+
+    for path in CANDIDATES {
+        let Ok(bytes) = std::fs::read(path) else {
+            continue;
+        };
+
+        // Guard against unreadable or truncated files: the font parser panics on invalid data.
+        if has_font_signature(&bytes) {
+            return Some(bytes);
+        }
+    }
+
+    None
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+fn has_font_signature(bytes: &[u8]) -> bool {
+    if bytes.len() < 4 {
+        return false;
+    }
+
+    let tag = [bytes[0], bytes[1], bytes[2], bytes[3]];
+
+    // TrueType, CFF-flavored OpenType, TrueType collection, Apple TrueType
+    tag == [0x00, 0x01, 0x00, 0x00] || tag == *b"OTTO" || tag == *b"ttcf" || tag == *b"true"
+}
+
 pub fn set_theme(ctx: &Context) {
     ctx.set_theme(ThemePreference::Dark);
+
+    #[cfg(not(target_arch = "wasm32"))]
+    install_cjk_fallback_font(ctx);
 
     let mut style = (*ctx.global_style()).clone();
     style.spacing.slider_width = 200_f32; // slider width can only be set globally
